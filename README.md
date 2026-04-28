@@ -10,7 +10,7 @@ The goal is to demonstrate real-world identity concepts including Single Sign-On
 
 ## Architecture Diagram
 
-![IAM Diagram](iam_diagram.png)
+![IAM Diagram](docs/iam_diagram.png)
 
 ---
 
