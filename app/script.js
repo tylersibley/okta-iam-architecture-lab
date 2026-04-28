@@ -8,7 +8,7 @@ let accessToken = null;
 function login() {
   const authUrl = `${oktaDomain}/oauth2/default/v1/authorize?` +
     `client_id=${clientId}` +
-    `&response_type=token` +
+    `&response_type=code` +
     `&scope=openid profile email` +
     `&redirect_uri=${redirectUri}` +
     `&state=1234` +
