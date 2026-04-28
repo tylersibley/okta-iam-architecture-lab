@@ -1,34 +1,41 @@
+const oktaDomain = "https://integrator-1985580.okta.com";
+const clientId = "0oa12fmpdobnNarSF698";
+const redirectUri = window.location.origin + "/okta-iam-architecture-lab/app/index.html";
+
+let accessToken = null;
+
+// LOGIN
 function login() {
-  const role = document.getElementById("roleSelect").value;
+  const authUrl = `${oktaDomain}/oauth2/default/v1/authorize?` +
+    `client_id=${clientId}` +
+    `&response_type=token` +
+    `&scope=openid profile email` +
+    `&redirect_uri=${redirectUri}` +
+    `&state=1234` +
+    `&nonce=5678`;
 
-  // Hide login card
-  document.querySelector(".login-card").classList.add("hidden");
+  window.location.href = authUrl;
+}
 
-  // Show app
-  document.getElementById("appContent").classList.remove("hidden");
+// HANDLE REDIRECT
+function handleRedirect() {
+  const hash = window.location.hash;
 
-  // Set welcome text
-  document.getElementById("welcomeText").innerText =
-    "Logged in as: " + role.toUpperCase();
+  if (hash.includes("access_token")) {
+    const params = new URLSearchParams(hash.substring(1));
+    accessToken = params.get("access_token");
 
-  // Reset visibility
-  document.getElementById("dashboard").classList.remove("hidden");
-  document.getElementById("engineering").classList.add("hidden");
-  document.getElementById("admin").classList.add("hidden");
+    document.querySelector(".login-card").style.display = "none";
+    document.getElementById("appContent").classList.remove("hidden");
 
-  // Role-based access
-  if (role === "engineer") {
-    document.getElementById("engineering").classList.remove("hidden");
-  }
-
-  if (role === "admin") {
-    document.getElementById("engineering").classList.remove("hidden");
-    document.getElementById("admin").classList.remove("hidden");
+    document.getElementById("welcomeText").innerText = "Logged in with Okta 🎉";
   }
 }
 
+// LOGOUT
 function logout() {
-  // Reset UI
-  document.querySelector(".login-card").classList.remove("hidden");
-  document.getElementById("appContent").classList.add("hidden");
+  window.location.href = `${oktaDomain}/oauth2/default/v1/logout?post_logout_redirect_uri=${redirectUri}`;
 }
+
+// RUN ON LOAD
+handleRedirect();
