@@ -1,5 +1,5 @@
 const oktaDomain = "https://integrator-1985580.okta.com";
-const clientId = "0oa12fmpdobnNarSF698";
+const clientId = "0oa12fnbbyuAYNWB9698";
 const redirectUri = window.location.origin + "/okta-iam-architecture-lab/app/index.html";
 
 function base64UrlEncode(buffer) {
