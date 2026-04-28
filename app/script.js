@@ -2,40 +2,89 @@ const oktaDomain = "https://integrator-1985580.okta.com";
 const clientId = "0oa12fmpdobnNarSF698";
 const redirectUri = window.location.origin + "/okta-iam-architecture-lab/app/index.html";
 
-let accessToken = null;
+function base64UrlEncode(buffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
 
-// LOGIN
-function login() {
-  const authUrl = `${oktaDomain}/oauth2/default/v1/authorize?` +
+async function sha256(plain) {
+  const encoder = new TextEncoder();
+  return await crypto.subtle.digest("SHA-256", encoder.encode(plain));
+}
+
+function generateRandomString(length = 64) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+  let result = "";
+  const randomValues = new Uint8Array(length);
+  crypto.getRandomValues(randomValues);
+
+  randomValues.forEach((value) => {
+    result += chars[value % chars.length];
+  });
+
+  return result;
+}
+
+async function login() {
+  const codeVerifier = generateRandomString();
+  sessionStorage.setItem("pkce_code_verifier", codeVerifier);
+
+  const codeChallenge = base64UrlEncode(await sha256(codeVerifier));
+
+  const authUrl =
+    `${oktaDomain}/oauth2/default/v1/authorize?` +
     `client_id=${clientId}` +
     `&response_type=code` +
     `&scope=openid profile email` +
-    `&redirect_uri=${redirectUri}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     `&state=1234` +
-    `&nonce=5678`;
+    `&nonce=5678` +
+    `&code_challenge=${codeChallenge}` +
+    `&code_challenge_method=S256`;
 
   window.location.href = authUrl;
 }
 
-// HANDLE REDIRECT
-function handleRedirect() {
-  const hash = window.location.hash;
+async function handleRedirect() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get("code");
 
-  if (hash.includes("access_token")) {
-    const params = new URLSearchParams(hash.substring(1));
-    accessToken = params.get("access_token");
+  if (!code) return;
 
+  const codeVerifier = sessionStorage.getItem("pkce_code_verifier");
+
+  const tokenResponse = await fetch(`${oktaDomain}/oauth2/default/v1/token`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body:
+      `grant_type=authorization_code` +
+      `&client_id=${clientId}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      `&code=${code}` +
+      `&code_verifier=${codeVerifier}`,
+  });
+
+  const tokens = await tokenResponse.json();
+
+  if (tokens.id_token || tokens.access_token) {
     document.querySelector(".login-card").style.display = "none";
     document.getElementById("appContent").classList.remove("hidden");
-
     document.getElementById("welcomeText").innerText = "Logged in with Okta 🎉";
+
+    window.history.replaceState({}, document.title, redirectUri);
+  } else {
+    console.error(tokens);
+    alert("Login failed. Check console.");
   }
 }
 
-// LOGOUT
 function logout() {
-  window.location.href = `${oktaDomain}/oauth2/default/v1/logout?post_logout_redirect_uri=${redirectUri}`;
+  window.location.href =
+    `${oktaDomain}/oauth2/default/v1/logout?post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`;
 }
 
-// RUN ON LOAD
 handleRedirect();
