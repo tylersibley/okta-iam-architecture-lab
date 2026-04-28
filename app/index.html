@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enterprise IAM Demo App</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Enterprise IAM Demo App</h1>
+      <p>Simulated internal application protected by Okta SSO, MFA, and RBAC.</p>
+    </header>
+
+    <section class="login-card">
+      <h2>Login Simulation</h2>
+      <p>Select a user role to simulate Okta group-based access.</p>
+
+      <select id="roleSelect">
+        <option value="sales">Sales</option>
+        <option value="engineer">Engineer</option>
+        <option value="admin">Admin</option>
+      </select>
+
+      <button onclick="login()">Login with Okta</button>
+    </section>
+
+    <section id="appContent" class="hidden">
+      <h2 id="welcomeText"></h2>
+
+      <div class="cards">
+        <div class="card" id="dashboard">
+          <h3>Dashboard</h3>
+          <p>Company metrics and customer usage data.</p>
+        </div>
+
+        <div class="card hidden" id="engineering">
+          <h3>Engineering Tools</h3>
+          <p>Developer resources, logs, and system tools.</p>
+        </div>
+
+        <div class="card hidden" id="admin">
+          <h3>Admin Panel</h3>
+          <p>User management, access policies, and security settings.</p>
+        </div>
+      </div>
+
+      <button class="logout" onclick="logout()">Logout</button>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
