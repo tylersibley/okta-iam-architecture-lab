@@ -5,6 +5,8 @@ const redirectUri =
 
 const apiBaseUrl = "https://okta-iam-backend.onrender.com";
 
+const awsFederationUrl = "https://integrator-1985580.okta.com/home/integrator-1985580_awsfederatedaccess_1/0oa12gny65j6BUbaJ698/aln12go9ft1MtuZBV698";
+
 let currentRole = "User";
 
 // ===== PKCE =====
@@ -263,6 +265,11 @@ function callAdminData() {
 
 function callAdminAPI() {
   callApi("/admin");
+}
+
+function openAWSConsole() {
+  addLog("Redirecting to AWS Console via Okta SAML federation");
+  window.open(awsFederationUrl, "_blank");
 }
 
 // ===== LOGOUT =====
