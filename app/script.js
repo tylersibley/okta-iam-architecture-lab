@@ -96,6 +96,11 @@ function renderTokenInspector(payload) {
 function renderRoleBasedUI(payload) {
   const groups = payload.groups || [];
 
+// 👇 ADD THIS RIGHT HERE
+if (!groups.includes("Engineering") && !groups.includes("Admin")) {
+  document.getElementById("awsCard").style.display = "none";
+}
+
   if (!groups.includes("Engineering") && !groups.includes("Admin")) {
   document.querySelector(".aws-button").style.display = "none";
 }
