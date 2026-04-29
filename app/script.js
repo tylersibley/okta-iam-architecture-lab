@@ -47,6 +47,12 @@ async function login() {
   window.location.href = authUrl;
 }
 
+function decodeJwt(token) {
+  const payload = token.split(".")[1];
+  const decodedPayload = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+  return JSON.parse(decodedPayload);
+}
+
 async function handleRedirect() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
@@ -77,7 +83,32 @@ async function handleRedirect() {
   if (tokens.id_token || tokens.access_token) {
     document.querySelector(".login-card").style.display = "none";
     document.getElementById("appContent").classList.remove("hidden");
-    document.getElementById("welcomeText").innerText = "Logged in with Okta 🎉";
+
+    const payload = decodeJwt(tokens.id_token);
+    const groups = payload.groups || [];
+
+    console.log("ID Token Payload:", payload);
+    console.log("User groups:", groups);
+
+    document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("engineering").classList.add("hidden");
+    document.getElementById("admin").classList.add("hidden");
+
+    let roleText = "User";
+
+    if (groups.includes("App-Admin")) {
+      roleText = "Admin";
+      document.getElementById("engineering").classList.remove("hidden");
+      document.getElementById("admin").classList.remove("hidden");
+    } else if (groups.includes("App-Engineer")) {
+      roleText = "Engineer";
+      document.getElementById("engineering").classList.remove("hidden");
+    } else if (groups.includes("App-Sales")) {
+      roleText = "Sales";
+    }
+
+    document.getElementById("welcomeText").innerText =
+      `Logged in as ${roleText} via Okta 🎉`;
 
     window.history.replaceState({}, document.title, redirectUri);
   } else {
