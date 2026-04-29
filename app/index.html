@@ -4,68 +4,94 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enterprise IAM Demo App</title>
-  <link rel="stylesheet" href="style.css?v=8" />
+  <link rel="stylesheet" href="style.css?v=10" />
 </head>
 <body>
   <div class="container">
     <header>
       <div class="eyebrow">Okta OIDC + PKCE + RBAC</div>
       <h1>Enterprise IAM Demo App</h1>
-      <p>Simulated internal application protected by Okta SSO, MFA, JWT validation, and role-based access control.</p>
+      <p>Simulated internal application protected by Okta SSO, MFA, JWT validation, and RBAC.</p>
     </header>
 
-    <section class="login-card" id="loginCard">
+    <!-- LOGIN -->
+    <section class="login-card">
       <h2>Secure Login</h2>
-      <p>Authenticate through Okta to access protected company resources.</p>
+      <p>Authenticate via Okta to access protected APIs.</p>
       <button onclick="login()">Login with Okta</button>
     </section>
 
+    <!-- APP -->
     <section id="appContent" class="hidden">
+
+      <!-- HEADER -->
       <div class="top-panel">
         <div>
           <h2 id="welcomeText"></h2>
-          <p class="subtext">Access is based on Okta group claims inside the token.</p>
+          <p class="subtext">Access controlled by Okta group claims inside JWT.</p>
         </div>
         <div id="roleBadge" class="role-badge">User</div>
       </div>
 
+      <!-- IDENTITY -->
       <div class="identity-card">
         <h3>Identity Claims</h3>
         <p id="userInfo"></p>
         <p id="groupInfo"></p>
       </div>
 
+      <!-- TOKEN INSPECTOR -->
+      <div class="api-card">
+        <h3>🔍 Token Inspector</h3>
+        <div class="token-grid">
+          <div><strong>sub:</strong> <span id="ti-sub"></span></div>
+          <div><strong>iss:</strong> <span id="ti-iss"></span></div>
+          <div><strong>aud:</strong> <span id="ti-aud"></span></div>
+          <div><strong>exp:</strong> <span id="ti-exp"></span></div>
+          <div><strong>groups:</strong> <span id="ti-groups"></span></div>
+        </div>
+      </div>
+
+      <!-- CARDS -->
       <div class="cards">
-        <div class="card" id="dashboard">
+        <div class="card">
           <span class="card-icon">📊</span>
           <h3>Dashboard</h3>
-          <p>Company metrics and customer usage data.</p>
+          <p>Company metrics and usage data.</p>
         </div>
 
         <div class="card hidden" id="engineering">
           <span class="card-icon">🧑‍💻</span>
           <h3>Engineering Tools</h3>
-          <p>Developer resources, logs, and system diagnostics.</p>
+          <p>Logs, diagnostics, and dev tools.</p>
         </div>
 
         <div class="card hidden" id="admin">
           <span class="card-icon">👑</span>
           <h3>Admin Panel</h3>
-          <p>User management, access policies, and security settings.</p>
+          <p>User management and policies.</p>
           <button onclick="callAdminAPI()">Run Admin Action</button>
         </div>
       </div>
 
+      <!-- ACCESS STATUS -->
       <div class="api-card">
         <h3>Authorization Status</h3>
         <p id="apiAccessText"></p>
       </div>
 
+      <!-- ACCESS DENIED CARD -->
+      <div id="accessDeniedCard" class="api-card hidden">
+        <h3>🚫 Access Denied</h3>
+        <p id="deniedText"></p>
+      </div>
+
+      <!-- API TESTING -->
       <div class="api-card">
         <div class="api-header">
           <div>
             <h3>Backend API Testing</h3>
-            <p>These calls prove backend JWT validation and RBAC enforcement.</p>
+            <p>JWT validation + RBAC enforcement</p>
           </div>
           <span id="apiStatusPill" class="status-pill neutral">Waiting</span>
         </div>
@@ -77,13 +103,20 @@
           <button onclick="callAdminData()">Admin API</button>
         </div>
 
-        <pre id="apiResponseBox">Click an API button to test backend access...</pre>
+        <pre id="apiResponseBox">Click a button to test APIs...</pre>
+      </div>
+
+      <!-- LOG PANEL -->
+      <div class="api-card">
+        <h3>📋 Activity Log</h3>
+        <ul id="logList"></ul>
       </div>
 
       <button class="logout" onclick="logout()">Logout</button>
+
     </section>
   </div>
 
-  <script src="script.js?v=8"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>
