@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enterprise IAM Demo App</title>
-  <link rel="stylesheet" href="style.css?v=12" />
+  <link rel="stylesheet" href="style.css?v=14" />
 </head>
+
 <body>
   <div class="container">
     <header>
@@ -48,7 +49,7 @@
 
       <div class="cards">
         <div class="card">
-  <span class="card-icon">📊</span>
+          <span class="card-icon">📊</span>
           <h3>Dashboard</h3>
           <p>Company metrics and usage data.</p>
         </div>
@@ -97,16 +98,9 @@
       </div>
 
       <div class="api-card">
-  <h3>☁️ AWS Federated Access</h3>
-  <p>This demonstrates how Okta identities can be used to access AWS resources.</p>
-
-  <p style="font-size:12px; color:#6b7280;">
-  Federated via Okta SAML → AWS IAM Role (Temporary Credentials)
-</p>
-
-  <p style="font-size:12px; color:#6b7280;">
-    Federated via Okta SAML → AWS IAM Role (Temporary Credentials)
-  </p>
+        <h3>☁️ AWS Federated Access</h3>
+        <p>This demonstrates how Okta identities can be used to access AWS resources.</p>
+        <p class="aws-context">Federated via Okta SAML → AWS IAM Role (Temporary Credentials)</p>
 
         <div class="cards">
           <div class="card">
@@ -122,37 +116,36 @@
           </div>
 
           <div class="card" id="awsCard">
-  <h4>🖥️ AWS Console</h4>
-  <p>Real federated login via Okta SAML and AWS IAM role.</p>
-  <a
-    class="aws-button"
-    href="https://integrator-1985580.okta.com/app/integrator-1985580_awsfederatedaccess_1/exk12gny65i7EHwa0698/sso/saml"
-    target="_blank"
-    onclick="addLog('Opening AWS Console via Okta SAML federation')"
-  >
-    Access AWS (Federated SSO)
-  </a>
-</div>
+            <h4>🖥️ AWS Console</h4>
+            <p>Real federated login via Okta SAML and AWS IAM role.</p>
+            <a
+              class="aws-button"
+              href="https://integrator-1985580.okta.com/app/integrator-1985580_awsfederatedaccess_1/exk12gny65i7EHwa0698/sso/saml"
+              target="_blank"
+              onclick="addLog('Opening AWS Console via Okta SAML federation')"
+            >
+              Access AWS (Federated SSO)
+            </a>
           </div>
         </div>
       </div>
 
       <div class="api-card audit-card">
-  <div class="audit-header">
-    <div>
-      <h3>📋 Audit Log</h3>
-      <p>Authentication, API access, RBAC decisions, and AWS federation events.</p>
-    </div>
-    <span class="audit-pill">Live</span>
-  </div>
+        <div class="audit-header">
+          <div>
+            <h3>📋 Audit Log</h3>
+            <p>Authentication, API access, RBAC decisions, and AWS federation events.</p>
+          </div>
+          <span class="audit-pill">Live</span>
+        </div>
 
-  <ul id="logList" class="audit-log"></ul>
-</div>
+        <ul id="logList" class="audit-log"></ul>
+      </div>
 
       <button class="logout" onclick="logout()">Logout</button>
     </section>
   </div>
 
-  <script src="script.js?v=12"></script>
+  <script src="script.js?v=14"></script>
 </body>
 </html>
