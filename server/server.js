@@ -115,7 +115,7 @@ app.get("/verify", verifyAccessToken, (req, res) => {
       subject: req.user.sub,
       issuer: req.user.iss,
       audience: req.user.aud,
-      email: req.user.sub,
+      email: req.user.email || "No email claim",
       groups: req.user.groups || [],
       issuedAt: req.user.iat,
       expiresAt: req.user.exp,
@@ -169,6 +169,12 @@ app.get(
     });
   }
 );
+
+app.get("/admin", verifyAccessToken, requireGroup("App-Admin"), (req, res) => {
+  res.json({
+    message: "Admin API action successful. User has App-Admin group.",
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Backend running at http://localhost:${PORT}`);
