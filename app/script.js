@@ -265,7 +265,6 @@ function callAdminAPI() {
   callApi("/admin");
 }
 
-// 👇 ADD IT HERE (very bottom)
 function simulateAWS(service) {
   addLog(`AWS access attempt: ${service}`);
 
@@ -275,7 +274,8 @@ function simulateAWS(service) {
     return;
   }
 
-  const groups = parseJwt(accessToken).groups || [];
+  const payload = parseJwt(accessToken);
+  const groups = payload.groups || [];
 
   let allowed = false;
 
@@ -291,13 +291,22 @@ function simulateAWS(service) {
     allowed = groups.includes("App-Admin");
   }
 
+  // 👇 THIS PART IS WHAT YOU WERE MISSING
   if (allowed) {
     updateAPIStatus("success");
-    showAPIResponse(`✅ AWS ${service} access granted via federated identity`);
+    showAPIResponse({
+      message: `AWS ${service} access granted`,
+      type: "Federated Access Simulation",
+      userGroups: groups
+    });
     addLog(`AWS ${service} access granted`);
   } else {
     updateAPIStatus("error");
-    showAPIResponse(`❌ AWS ${service} access denied (RBAC)`);
+    showAPIResponse({
+      message: `AWS ${service} access denied`,
+      requiredAccess: service,
+      userGroups: groups
+    });
     addLog(`AWS ${service} access denied`);
   }
 }
