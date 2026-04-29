@@ -5,11 +5,13 @@ const redirectUri =
 
 const apiBaseUrl = "https://okta-iam-backend.onrender.com";
 
+let currentRole = "User";
+
 // ===== PKCE =====
 function base64UrlEncode(buffer) {
   return btoa(String.fromCharCode(...new Uint8Array(buffer)))
     .replace(/\+/g, "-")
-    .replace(/\//g, "_")
+    .replace(/\\//g, "_")
     .replace(/=+$/, "");
 }
 
@@ -29,6 +31,7 @@ function generateRandomString(length = 64) {
 }
 
 async function login() {
+  addLog("Login started — redirecting to Okta");
   const codeVerifier = generateRandomString();
   sessionStorage.setItem("pkce_code_verifier", codeVerifier);
 
@@ -62,6 +65,31 @@ function validateIdToken(payload) {
   return true;
 }
 
+function formatUnixTime(unixTime) {
+  if (!unixTime) return "N/A";
+  return new Date(unixTime * 1000).toLocaleString();
+}
+
+// ===== LOGGING =====
+function addLog(message) {
+  const logList = document.getElementById("logList");
+  if (!logList) return;
+
+  const li = document.createElement("li");
+  li.textContent = `${new Date().toLocaleTimeString()} — ${message}`;
+  logList.prepend(li);
+}
+
+// ===== TOKEN INSPECTOR =====
+function renderTokenInspector(payload) {
+  document.getElementById("ti-sub").innerText = payload.sub || "N/A";
+  document.getElementById("ti-iss").innerText = payload.iss || "N/A";
+  document.getElementById("ti-aud").innerText = payload.aud || "N/A";
+  document.getElementById("ti-exp").innerText = formatUnixTime(payload.exp);
+  document.getElementById("ti-groups").innerText =
+    payload.groups?.join(", ") || "No groups";
+}
+
 // ===== UI =====
 function renderRoleBasedUI(payload) {
   const groups = payload.groups || [];
@@ -69,35 +97,40 @@ function renderRoleBasedUI(payload) {
   document.querySelector(".login-card").style.display = "none";
   document.getElementById("appContent").classList.remove("hidden");
 
-  let role = "User";
+  document.getElementById("engineering").classList.add("hidden");
+  document.getElementById("admin").classList.add("hidden");
+
+  currentRole = "User";
 
   if (groups.includes("App-Admin")) {
-    role = "Admin";
+    currentRole = "Admin";
     document.getElementById("engineering").classList.remove("hidden");
     document.getElementById("admin").classList.remove("hidden");
   } else if (groups.includes("App-Engineer")) {
-    role = "Engineer";
+    currentRole = "Engineer";
     document.getElementById("engineering").classList.remove("hidden");
   } else if (groups.includes("App-Sales")) {
-    role = "Sales";
+    currentRole = "Sales";
   }
 
-  // ROLE BADGE
   const badge = document.getElementById("roleBadge");
-  badge.innerText = role;
-  badge.className = `role-badge ${role.toLowerCase()}`;
+  badge.innerText = currentRole;
+  badge.className = `role-badge ${currentRole.toLowerCase()}`;
 
   document.getElementById("welcomeText").innerText =
-    `Logged in as ${role}`;
+    `Logged in as ${currentRole}`;
 
   document.getElementById("userInfo").innerText =
-    `${payload.name} (${payload.email})`;
+    `${payload.name || "Unknown"} (${payload.email || "No email claim"})`;
 
   document.getElementById("groupInfo").innerText =
-    `Groups: ${groups.join(", ")}`;
+    `Groups: ${groups.length ? groups.join(", ") : "No groups found"}`;
 
   document.getElementById("apiAccessText").innerText =
-  `Frontend RBAC applied (UI) — Backend enforces real security via JWT + group claims`;
+    "Frontend RBAC applied (UI) — Backend enforces real security via JWT + group claims.";
+
+  renderTokenInspector(payload);
+  addLog(`Login successful as ${currentRole}`);
 }
 
 // ===== REDIRECT =====
@@ -121,8 +154,18 @@ async function handleRedirect() {
 
   const tokens = await res.json();
 
+  if (!tokens.id_token || !tokens.access_token) {
+    alert("Login failed. Check console.");
+    console.error(tokens);
+    return;
+  }
+
   const payload = decodeJwt(tokens.id_token);
-  if (!validateIdToken(payload)) return;
+
+  if (!validateIdToken(payload)) {
+    alert("Invalid ID token.");
+    return;
+  }
 
   sessionStorage.setItem("access_token", tokens.access_token);
   sessionStorage.setItem("id_token", tokens.id_token);
@@ -132,18 +175,38 @@ async function handleRedirect() {
   window.history.replaceState({}, document.title, redirectUri);
 }
 
+// ===== ACCESS DENIED UI =====
+function showAccessDenied(endpoint, data) {
+  const card = document.getElementById("accessDeniedCard");
+  const text = document.getElementById("deniedText");
+
+  card.classList.remove("hidden");
+  text.innerText =
+    `Your current role (${currentRole}) does not have permission to access ${endpoint}.\n` +
+    `${data.message || "Access denied by backend RBAC policy."}`;
+
+  addLog(`Access denied for ${endpoint}`);
+}
+
+function hideAccessDenied() {
+  document.getElementById("accessDeniedCard").classList.add("hidden");
+}
+
 // ===== API CORE =====
 async function callApi(endpoint) {
   const token = sessionStorage.getItem("access_token");
   const box = document.getElementById("apiResponseBox");
   const pill = document.getElementById("apiStatusPill");
 
-  // LOADING STATE
-  box.innerText = "Loading...";
+  hideAccessDenied();
+
+  box.innerText = `Calling ${endpoint}...`;
   box.style.background = "#1e293b";
 
-  pill.innerText = "Loading...";
+  pill.innerText = "Loading";
   pill.className = "status-pill loading";
+
+  addLog(`API call started: ${endpoint}`);
 
   try {
     const res = await fetch(`${apiBaseUrl}${endpoint}`, {
@@ -152,39 +215,55 @@ async function callApi(endpoint) {
 
     const data = await res.json();
 
-    // ❌ ERROR RESPONSE
     if (!res.ok) {
-      box.innerText = `❌ ${res.status}\n\n${JSON.stringify(data, null, 2)}`;
+      box.innerText = `❌ ${res.status} DENIED\n\n${JSON.stringify(data, null, 2)}`;
       box.style.background = "#7f1d1d";
 
       pill.innerText = "Denied";
       pill.className = "status-pill error";
 
+      showAccessDenied(endpoint, data);
       return;
     }
 
-    // ✅ SUCCESS RESPONSE
     box.innerText = `✅ SUCCESS\n\n${JSON.stringify(data, null, 2)}`;
     box.style.background = "#064e3b";
 
     pill.innerText = "Success";
     pill.className = "status-pill success";
 
+    addLog(`Access granted for ${endpoint}`);
   } catch (err) {
     box.innerText = "❌ Backend not reachable";
     box.style.background = "#7f1d1d";
 
     pill.innerText = "Error";
     pill.className = "status-pill error";
+
+    addLog("Backend not reachable");
   }
 }
 
 // ===== API BUTTONS =====
-function callVerify() { callApi("/verify"); }
-function callSales() { callApi("/sales-data"); }
-function callEngineering() { callApi("/engineering-data"); }
-function callAdminData() { callApi("/admin-data"); }
-function callAdminAPI() { callApi("/admin"); }
+function callVerify() {
+  callApi("/verify");
+}
+
+function callSales() {
+  callApi("/sales-data");
+}
+
+function callEngineering() {
+  callApi("/engineering-data");
+}
+
+function callAdminData() {
+  callApi("/admin-data");
+}
+
+function callAdminAPI() {
+  callApi("/admin");
+}
 
 // ===== LOGOUT =====
 function logout() {
