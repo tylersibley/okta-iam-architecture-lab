@@ -46,9 +46,22 @@
       </div>
 
       <div class="api-card">
-        <h3>Authorization Check</h3>
-        <p id="apiAccessText"></p>
-      </div>
+  <h3>Authorization Check</h3>
+  <p id="apiAccessText"></p>
+</div>
+
+<div class="api-card">
+  <h3>Backend API Testing</h3>
+
+  <div class="api-buttons">
+    <button onclick="callVerify()">Verify Token</button>
+    <button onclick="callSales()">Sales API</button>
+    <button onclick="callEngineering()">Engineering API</button>
+    <button onclick="callAdminData()">Admin Data API</button>
+  </div>
+
+  <pre id="apiResponseBox">Click a button to test backend APIs...</pre>
+</div>
 
       <button class="logout" onclick="logout()">Logout</button>
     </section>
