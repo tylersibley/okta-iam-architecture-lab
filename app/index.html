@@ -2,71 +2,80 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Enterprise IAM Demo App</title>
-  <link rel="stylesheet" href="style.css?v=6" />
+  <link rel="stylesheet" href="style.css?v=7" />
 </head>
 <body>
   <div class="container">
+
     <header>
       <h1>Enterprise IAM Demo App</h1>
-      <p>Simulated internal application protected by Okta SSO, MFA, and RBAC.</p>
+      <p>Okta SSO • MFA • RBAC • JWT Validation</p>
     </header>
 
+    <!-- LOGIN -->
     <section class="login-card">
       <h2>Login Simulation</h2>
-      <p>Authentication and role access are controlled by Okta groups.</p>
       <button onclick="login()">Login with Okta</button>
     </section>
 
+    <!-- APP -->
     <section id="appContent" class="hidden">
+
       <h2 id="welcomeText"></h2>
 
+      <!-- ROLE BADGE -->
+      <div id="roleBadge" class="role-badge"></div>
+
+      <!-- USER INFO -->
       <div class="identity-card">
         <p id="userInfo"></p>
         <p id="groupInfo"></p>
       </div>
 
+      <!-- FEATURES -->
       <div class="cards">
-        <div class="card" id="dashboard">
+        <div class="card">
           <h3>Dashboard</h3>
-          <p>Company metrics and customer usage data.</p>
         </div>
 
         <div class="card hidden" id="engineering">
           <h3>Engineering Tools</h3>
-          <p>Developer resources, logs, and system tools.</p>
         </div>
 
         <div class="card hidden" id="admin">
           <h3>Admin Panel</h3>
-          <p>User management, access policies, and security settings.</p>
-          <button onclick="callAdminAPI()">Run Admin API Action</button>
+          <button onclick="callAdminAPI()">Run Admin Action</button>
         </div>
       </div>
 
+      <!-- AUTH RESULT -->
       <div class="api-card">
-  <h3>Authorization Check</h3>
-  <p id="apiAccessText"></p>
-</div>
+        <h3>Authorization Status</h3>
+        <p id="apiAccessText"></p>
+      </div>
 
-<div class="api-card">
-  <h3>Backend API Testing</h3>
+      <!-- 🔥 API TESTING PANEL -->
+      <div class="api-card">
+        <h3>Backend API Testing</h3>
 
-  <div class="api-buttons">
-    <button onclick="callVerify()">Verify Token</button>
-    <button onclick="callSales()">Sales API</button>
-    <button onclick="callEngineering()">Engineering API</button>
-    <button onclick="callAdminData()">Admin Data API</button>
-  </div>
+        <div class="api-buttons">
+          <button onclick="callVerify()">Verify Token</button>
+          <button onclick="callSales()">Sales API</button>
+          <button onclick="callEngineering()">Engineering API</button>
+          <button onclick="callAdminData()">Admin API</button>
+        </div>
 
-  <pre id="apiResponseBox">Click a button to test backend APIs...</pre>
-</div>
+        <pre id="apiResponseBox">Click a button to test APIs...</pre>
+      </div>
 
       <button class="logout" onclick="logout()">Logout</button>
+
     </section>
+
   </div>
 
-  <script src="script.js?v=6"></script>
+  <script src="script.js?v=7"></script>
 </body>
 </html>
