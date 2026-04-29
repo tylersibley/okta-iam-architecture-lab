@@ -85,12 +85,18 @@ async function handleRedirect() {
 }
 
 function logout() {
+  const idToken = sessionStorage.getItem("id_token");
   sessionStorage.clear();
 
-  window.location.href =
+  let logoutUrl =
     `${oktaDomain}/oauth2/default/v1/logout?` +
-    `client_id=${clientId}` +
-    `&post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`;
+    `post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`;
+
+  if (idToken) {
+    logoutUrl += `&id_token_hint=${idToken}`;
+  }
+
+  window.location.href = logoutUrl;
 }
 
 handleRedirect();
