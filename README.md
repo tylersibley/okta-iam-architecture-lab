@@ -53,6 +53,9 @@ Users authenticate through Okta and are redirected back to the application with 
 
 ![Login](./screenshots/login_page.PNG)
 
+### 🔁 Okta Hosted Login Redirect
+![Okta Hosted Login](screenshots/okta_hosted_login.PNG)
+
 ### ✅ Successful Authentication
 
 ![Logged In](./screenshots/logged_in_with_okta.PNG)
