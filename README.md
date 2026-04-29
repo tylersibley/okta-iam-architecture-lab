@@ -1,54 +1,86 @@
-# Enterprise IAM Architecture (Okta + AWS)
+# Enterprise IAM Demo App (Okta OIDC + PKCE)
 
 ## Overview
 
-This project simulates how an enterprise uses Okta as an Identity Provider (IdP) to manage authentication, enforce Multi-Factor Authentication (MFA), and provide secure access to internal applications and AWS resources.
+This project demonstrates a real-world Identity and Access Management (IAM) implementation using Okta. It simulates a secure internal application protected by OAuth 2.0, OpenID Connect (OIDC), and PKCE.
 
-The goal is to demonstrate real-world identity concepts including Single Sign-On (SSO), Role-Based Access Control (RBAC), and user lifecycle management.
-
----
-
-## Architecture Diagram
-
-![IAM Diagram](docs/iam_diagram.png)
-
----
-
-## How It Works
-
-1. A user attempts to access an internal application.
-2. The application redirects the user to Okta for authentication.
-3. Okta prompts the user for credentials and enforces MFA.
-4. Upon successful authentication, Okta issues a token (OIDC or SAML).
-5. The application validates the token and grants access.
-6. (Optional) The user can access AWS resources via federated login.
+Users authenticate through Okta and are redirected back to the application with secure tokens. The app then renders content based on authentication state.
 
 ---
 
 ## Key Features
 
-* Single Sign-On (SSO)
-* Multi-Factor Authentication (MFA)
-* Role-Based Access Control (RBAC)
-* User Lifecycle Management
-* (Optional) AWS Federation
+* 🔐 Okta OAuth 2.0 Authorization Code Flow with PKCE
+* 🌐 OpenID Connect (OIDC) authentication
+* 🔁 Secure redirect + token exchange
+* 🧠 Session-based login handling
+* 🚪 Logout with Okta session termination
+* 🏢 Role simulation (Sales, Engineer, Admin UI)
 
 ---
 
-## Technologies Used
+## Architecture Flow
 
-* Okta (Identity Provider)
-* AWS (IAM, optional integration)
-* OpenID Connect (OIDC) / SAML
+1. User clicks **Login with Okta**
+2. Redirected to Okta `/authorize` endpoint
+3. User authenticates
+4. Okta returns **authorization code**
+5. App exchanges code for tokens via `/token`
+6. UI updates to authenticated state
+
+---
+
+## Tech Stack
+
+* Frontend: HTML, CSS, JavaScript
+* Identity Provider: Okta
+* Protocols: OAuth 2.0, OpenID Connect (OIDC)
+* Security: PKCE (Proof Key for Code Exchange)
+
+---
+
+## Screenshots
+
+### 🔧 Okta App Configuration
+
+![App Config](./screenshots/Okta_app_config.PNG)
+
+### 🔐 Authorization Policy Rule
+
+![Policy Rule](./screenshots/Policy_rule.PNG)
+
+### 🔓 Login Screen
+
+![Login](./screenshots/login_page.PNG)
+
+### ✅ Successful Authentication
+
+![Logged In](./screenshots/logged_in_with_okta.PNG)
+
+### ⚠️ Debugging Errors (PKCE / Policy)
+
+![Error](./screenshots/error_page.PNG)
+
+---
+
+## Lessons Learned
+
+* Configuring OAuth flows requires correct **grant types + PKCE alignment**
+* Okta policies must explicitly allow **Authorization Code flow**
+* Redirect URIs must match exactly or authentication fails
+* Debugging IAM flows involves interpreting multiple error states (PKCE, policy, assignment)
+
+---
+
+## How to Run
+
+1. Clone repo
+2. Update `script.js` with your Okta domain + client ID
+3. Host with GitHub Pages or local server
+4. Click **Login with Okta**
 
 ---
 
 ## Why This Matters
 
-Centralizing authentication through an Identity Provider like Okta improves security, simplifies access management, and enables scalable user lifecycle control across enterprise systems.
-
----
-
-## Demo (Coming Soon)
-
-A walkthrough of the login flow and system behavior will be added.
+This project replicates how real SaaS apps (like Okta, AWS, Google) handle authentication securely in production environments.
