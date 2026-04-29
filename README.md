@@ -34,7 +34,7 @@ Users authenticate through Okta and are redirected back to the application with 
 
 This implementation demonstrates how identity providers (IdPs) embed authorization data (group membership) directly into ID tokens, enabling frontend applications to enforce role-based access control without additional backend calls.
 
-![Diagram](./screenshots/iam_diagram.PNG)
+![Diagram](./screenshots/iam_diagram.png)
 
 ---
 
