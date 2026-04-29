@@ -63,7 +63,7 @@ Users authenticate through Okta and are redirected back to the application with 
 ### ⚠️ Debugging Errors (PKCE / Policy)
 
 ![Error](./screenshots/error_page1.PNG)
-
+![Error1](./screenshots/error2.PNG)
 ---
 
 ## Lessons Learned
