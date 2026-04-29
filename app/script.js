@@ -3,7 +3,7 @@ const clientId = "0oa12fnbbyuAYNWB9698";
 const redirectUri =
   window.location.origin + "/okta-iam-architecture-lab/app/index.html";
 
-const apiBaseUrl = "http://localhost:3000";
+const apiBaseUrl = "https://okta-iam-backend.onrender.com";
 
 // ===== PKCE =====
 function base64UrlEncode(buffer) {
