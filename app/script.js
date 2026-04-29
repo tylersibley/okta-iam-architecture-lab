@@ -83,8 +83,12 @@ async function handleRedirect() {
 }
 
 function logout() {
+  sessionStorage.clear();
+
   window.location.href =
-    `${oktaDomain}/oauth2/default/v1/logout?post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`;
+    `${oktaDomain}/oauth2/default/v1/logout?` +
+    `client_id=${clientId}` +
+    `&post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`;
 }
 
 handleRedirect();
