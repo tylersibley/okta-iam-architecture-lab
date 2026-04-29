@@ -118,3 +118,20 @@ button:hover {
   margin-top: 12px;
   background: #111827;
 }
+
+.api-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+#apiResponseBox {
+  margin-top: 15px;
+  padding: 12px;
+  background: #111827;
+  color: #e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  overflow-x: auto;
+}
