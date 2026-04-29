@@ -188,9 +188,18 @@ function callAdminAPI() { callApi("/admin"); }
 
 // ===== LOGOUT =====
 function logout() {
+  const idToken = sessionStorage.getItem("id_token");
   sessionStorage.clear();
-  window.location.href =
-    `${oktaDomain}/oauth2/default/v1/logout?post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`;
+
+  let logoutUrl =
+    `${oktaDomain}/oauth2/default/v1/logout?` +
+    `post_logout_redirect_uri=${encodeURIComponent(redirectUri)}`;
+
+  if (idToken) {
+    logoutUrl += `&id_token_hint=${idToken}`;
+  }
+
+  window.location.href = logoutUrl;
 }
 
 // ===== INIT =====
