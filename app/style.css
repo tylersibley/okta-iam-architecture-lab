@@ -290,3 +290,88 @@ button:hover {
 .aws-button:hover {
   background: #1d4ed8;
 }
+
+.audit-card {
+  background: #f8fafc;
+}
+
+.audit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.audit-header p {
+  margin-top: 4px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.audit-pill {
+  background: #dcfce7;
+  color: #166534;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.audit-log {
+  list-style: none;
+  padding: 0;
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.audit-log-item {
+  display: grid;
+  grid-template-columns: 95px 95px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #2563eb;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.audit-time {
+  color: #475569;
+  font-family: monospace;
+}
+
+.audit-type {
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.audit-type.info {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.audit-type.success {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.audit-type.denied {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.audit-type.federation {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.audit-message {
+  color: #0f172a;
+}
