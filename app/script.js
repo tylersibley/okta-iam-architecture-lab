@@ -272,6 +272,36 @@ function openAWSConsole() {
   window.open(awsFederationUrl, "_blank");
 }
 
+function simulateAWS(service) {
+  const box = document.getElementById("apiResponseBox");
+  const pill = document.getElementById("apiStatusPill");
+
+  hideAccessDenied();
+  addLog(`AWS ${service} access simulation started`);
+
+  const result = {
+    service,
+    type: "AWS Access Simulation",
+    currentRole,
+    explanation:
+      service === "S3"
+        ? "Simulates read-only access to Amazon S3 through role-based permissions."
+        : "Simulates database access to Amazon RDS through role-based permissions.",
+    decision:
+      service === "S3"
+        ? "Allowed for Sales/Admin-style access"
+        : "Allowed for Engineer/Admin-style access"
+  };
+
+  box.innerText = `☁️ AWS ${service} ACCESS SIMULATION\n\n${JSON.stringify(result, null, 2)}`;
+  box.style.background = "#064e3b";
+
+  pill.innerText = "Simulated";
+  pill.className = "status-pill success";
+
+  addLog(`AWS ${service} simulated access displayed`);
+}
+
 // ===== LOGOUT =====
 function logout() {
   const idToken = sessionStorage.getItem("id_token");
