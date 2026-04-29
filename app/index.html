@@ -137,10 +137,17 @@
         </div>
       </div>
 
-      <div class="api-card">
-        <h3>📋 Activity Log</h3>
-        <ul id="logList"></ul>
-      </div>
+      <div class="api-card audit-card">
+  <div class="audit-header">
+    <div>
+      <h3>📋 Audit Log</h3>
+      <p>Authentication, API access, RBAC decisions, and AWS federation events.</p>
+    </div>
+    <span class="audit-pill">Live</span>
+  </div>
+
+  <ul id="logList" class="audit-log"></ul>
+</div>
 
       <button class="logout" onclick="logout()">Logout</button>
     </section>
