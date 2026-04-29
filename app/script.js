@@ -78,7 +78,19 @@ function addLog(message) {
   if (!logList) return;
 
   const li = document.createElement("li");
-  li.textContent = `${new Date().toLocaleTimeString()} — ${message}`;
+  li.className = "audit-log-item";
+
+  let type = "INFO";
+  if (message.toLowerCase().includes("denied")) type = "DENIED";
+  if (message.toLowerCase().includes("granted") || message.toLowerCase().includes("successful")) type = "SUCCESS";
+  if (message.toLowerCase().includes("aws") || message.toLowerCase().includes("federation")) type = "FEDERATION";
+
+  li.innerHTML = `
+    <span class="audit-time">${new Date().toLocaleTimeString()}</span>
+    <span class="audit-type ${type.toLowerCase()}">${type}</span>
+    <span class="audit-message">${message}</span>
+  `;
+
   logList.prepend(li);
 }
 
