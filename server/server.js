@@ -18,14 +18,9 @@ const client = jwksClient({
 });
 
 function getSigningKey(header, callback) {
-  client.getSigningKey(header.kid, function (err, key) {
-    if (err) {
-      callback(err);
-      return;
-    }
-
-    const signingKey = key.getPublicKey();
-    callback(null, signingKey);
+  client.getSigningKey(header.kid, (err, key) => {
+    if (err) return callback(err);
+    callback(null, key.getPublicKey());
   });
 }
 
@@ -48,53 +43,132 @@ function verifyAccessToken(req, res, next) {
       audience,
       algorithms: ["RS256"],
     },
-    (err, decoded) => {
+    (err, decodedToken) => {
       if (err) {
+        console.error("Token verification failed:", err.message);
         return res.status(401).json({
           message: "Invalid or expired access token",
           error: err.message,
         });
       }
 
-      req.user = decoded;
+      console.log("Verified token:", {
+        subject: decodedToken.sub,
+        issuer: decodedToken.iss,
+        audience: decodedToken.aud,
+        groups: decodedToken.groups || [],
+      });
+
+      req.user = decodedToken;
       next();
     }
   );
 }
 
-function requireAdminGroup(req, res, next) {
-  const groups = req.user.groups || [];
+function requireGroup(groupName) {
+  return (req, res, next) => {
+    const groups = req.user.groups || [];
 
-  if (!groups.includes("App-Admin")) {
-    return res.status(403).json({
-      message: "Access denied. User does not have App-Admin group claim.",
-      groups,
-    });
-  }
+    if (!groups.includes(groupName)) {
+      return res.status(403).json({
+        message: `Access denied. Required group: ${groupName}`,
+        userGroups: groups,
+      });
+    }
 
-  next();
+    next();
+  };
+}
+
+function requireAnyGroup(allowedGroups) {
+  return (req, res, next) => {
+    const groups = req.user.groups || [];
+    const allowed = allowedGroups.some((group) => groups.includes(group));
+
+    if (!allowed) {
+      return res.status(403).json({
+        message: `Access denied. Required one of: ${allowedGroups.join(", ")}`,
+        userGroups: groups,
+      });
+    }
+
+    next();
+  };
 }
 
 app.get("/", (req, res) => {
   res.json({
     message: "Okta IAM backend is running",
+    endpoints: [
+      "/verify",
+      "/sales-data",
+      "/engineering-data",
+      "/admin-data",
+    ],
   });
 });
 
-app.get("/profile", verifyAccessToken, (req, res) => {
+app.get("/verify", verifyAccessToken, (req, res) => {
   res.json({
-    message: "Token is valid",
-    user: req.user,
+    message: "Token is valid. Backend successfully verified JWT signature, issuer, audience, and expiration.",
+    tokenClaims: {
+      subject: req.user.sub,
+      issuer: req.user.iss,
+      audience: req.user.aud,
+      email: req.user.sub,
+      groups: req.user.groups || [],
+      issuedAt: req.user.iat,
+      expiresAt: req.user.exp,
+      scopes: req.user.scp || [],
+    },
   });
 });
 
-app.get("/admin", verifyAccessToken, requireAdminGroup, (req, res) => {
-  res.json({
-    message: "Admin API call successful. Backend validated token and App-Admin group.",
-    user: req.user.sub,
-    groups: req.user.groups || [],
-  });
-});
+app.get(
+  "/sales-data",
+  verifyAccessToken,
+  requireAnyGroup(["App-Sales", "App-Engineer", "App-Admin"]),
+  (req, res) => {
+    res.json({
+      message: "Sales data access granted.",
+      data: {
+        dashboard: "Customer usage metrics",
+        report: "Quarterly sales activity",
+      },
+    });
+  }
+);
+
+app.get(
+  "/engineering-data",
+  verifyAccessToken,
+  requireAnyGroup(["App-Engineer", "App-Admin"]),
+  (req, res) => {
+    res.json({
+      message: "Engineering data access granted.",
+      data: {
+        logs: "System logs",
+        tools: "Developer diagnostics",
+      },
+    });
+  }
+);
+
+app.get(
+  "/admin-data",
+  verifyAccessToken,
+  requireGroup("App-Admin"),
+  (req, res) => {
+    res.json({
+      message: "Admin data access granted.",
+      data: {
+        users: "User management",
+        policies: "Security policy controls",
+        settings: "Application configuration",
+      },
+    });
+  }
+);
 
 app.listen(PORT, () => {
   console.log(`Backend running at http://localhost:${PORT}`);
