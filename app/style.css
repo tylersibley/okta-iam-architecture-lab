@@ -135,3 +135,29 @@ button:hover {
   font-size: 14px;
   overflow-x: auto;
 }
+
+.role-badge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: bold;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.role-badge.admin { background: #dc2626; color: white; }
+.role-badge.engineer { background: #2563eb; color: white; }
+.role-badge.sales { background: #16a34a; color: white; }
+
+.api-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#apiResponseBox {
+  margin-top: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 14px;
+}
