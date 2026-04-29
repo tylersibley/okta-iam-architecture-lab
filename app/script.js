@@ -53,6 +53,48 @@ function decodeJwt(token) {
   return JSON.parse(decodedPayload);
 }
 
+function renderRoleBasedUI(payload) {
+  const groups = payload.groups || [];
+
+  document.getElementById("dashboard").classList.remove("hidden");
+  document.getElementById("engineering").classList.add("hidden");
+  document.getElementById("admin").classList.add("hidden");
+
+  let roleText = "User";
+
+  if (groups.includes("App-Admin")) {
+    roleText = "Admin";
+    document.getElementById("engineering").classList.remove("hidden");
+    document.getElementById("admin").classList.remove("hidden");
+    document.getElementById("apiAccessText").innerText =
+      "Admin API access granted: user has App-Admin group claim.";
+  } else if (groups.includes("App-Engineer")) {
+    roleText = "Engineer";
+    document.getElementById("engineering").classList.remove("hidden");
+    document.getElementById("apiAccessText").innerText =
+      "Admin API access denied: engineer role does not have App-Admin claim.";
+  } else if (groups.includes("App-Sales")) {
+    roleText = "Sales";
+    document.getElementById("apiAccessText").innerText =
+      "Admin API access denied: sales role is limited to dashboard access.";
+  } else {
+    document.getElementById("apiAccessText").innerText =
+      "No matching App-* group found. Defaulting to basic user access.";
+  }
+
+  document.getElementById("welcomeText").innerText =
+    `Logged in as ${roleText} via Okta 🎉`;
+
+  document.getElementById("userInfo").innerText =
+    `User: ${payload.name || "Unknown"} (${payload.email || "No email claim"})`;
+
+  document.getElementById("groupInfo").innerText =
+    `Okta Groups: ${groups.length ? groups.join(", ") : "No App-* group claim found"}`;
+
+  console.log("ID Token Payload:", payload);
+  console.log("User groups:", groups);
+}
+
 async function handleRedirect() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
@@ -85,30 +127,7 @@ async function handleRedirect() {
     document.getElementById("appContent").classList.remove("hidden");
 
     const payload = decodeJwt(tokens.id_token);
-    const groups = payload.groups || [];
-
-    console.log("ID Token Payload:", payload);
-    console.log("User groups:", groups);
-
-    document.getElementById("dashboard").classList.remove("hidden");
-    document.getElementById("engineering").classList.add("hidden");
-    document.getElementById("admin").classList.add("hidden");
-
-    let roleText = "User";
-
-    if (groups.includes("App-Admin")) {
-      roleText = "Admin";
-      document.getElementById("engineering").classList.remove("hidden");
-      document.getElementById("admin").classList.remove("hidden");
-    } else if (groups.includes("App-Engineer")) {
-      roleText = "Engineer";
-      document.getElementById("engineering").classList.remove("hidden");
-    } else if (groups.includes("App-Sales")) {
-      roleText = "Sales";
-    }
-
-    document.getElementById("welcomeText").innerText =
-      `Logged in as ${roleText} via Okta 🎉`;
+    renderRoleBasedUI(payload);
 
     window.history.replaceState({}, document.title, redirectUri);
   } else {
