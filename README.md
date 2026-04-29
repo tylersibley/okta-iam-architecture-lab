@@ -8,6 +8,10 @@ Users authenticate through Okta and are redirected back to the application with 
 
 ---
 
+🚀 Live Demo: https://tylersibley.github.io/okta-iam-architecture-lab/
+
+---
+
 ## Key Features
 
 * 🔐 Okta OAuth 2.0 Authorization Code Flow with PKCE
@@ -15,7 +19,7 @@ Users authenticate through Okta and are redirected back to the application with 
 * 🔁 Secure redirect + token exchange
 * 🧠 Session-based login handling
 * 🚪 Logout with Okta session termination
-* 🏢 Role simulation (Sales, Engineer, Admin UI)
+* 🔐 Role-Based Access Control (RBAC) using Okta group claims
 
 ---
 
@@ -27,6 +31,33 @@ Users authenticate through Okta and are redirected back to the application with 
 4. Okta returns **authorization code**
 5. App exchanges code for tokens via `/token`
 6. UI updates to authenticated state
+
+This implementation demonstrates how identity providers (IdPs) embed authorization data (group membership) directly into ID tokens, enabling frontend applications to enforce role-based access control without additional backend calls.
+
+---
+
+## Architecture Diagram
+
+```mermaid
+flowchart LR
+    A[👤 User Browser] -->|1. Click Login| B[💻 Frontend App<br/>(Your App)]
+    B -->|2. /authorize (PKCE)| C[🔐 Okta Authorization Server]
+    
+    C -->|3. Login + MFA| A
+    C -->|4. Authorization Code| B
+    
+    B -->|5. POST /token<br/>(code + verifier)| D[🔑 Okta Token Endpoint]
+    
+    D -->|6. ID Token + Access Token<br/>(includes groups)| B
+    
+    B -->|7. RBAC Logic| E{Role-Based UI}
+    
+    E -->|Admin| F[👑 Admin Panel]
+    E -->|Engineer| G[🛠 Engineering Tools]
+    E -->|Sales| H[📊 Sales Dashboard]
+    
+    B -->|Optional| I[☁️ AWS Resources]
+    I --> J[(S3 / RDS / Console)]
 
 ---
 
@@ -71,6 +102,7 @@ Users authenticate through Okta and are redirected back to the application with 
 
 ![Error](./screenshots/error_page0.PNG)
 ![Error1](./screenshots/error2.PNG)
+
 ---
 
 ## Lessons Learned
@@ -88,6 +120,16 @@ Users authenticate through Okta and are redirected back to the application with 
 2. Update `script.js` with your Okta domain + client ID
 3. Host with GitHub Pages or local server
 4. Click **Login with Okta**
+
+---
+
+## Production Considerations
+
+- Tokens should be validated server-side (JWT signature verification)
+- Access tokens should be used for API authorization (not ID tokens)
+- Sensitive logic should not rely solely on frontend RBAC
+- Secure storage should use HTTP-only cookies instead of sessionStorage
+- MFA and conditional access policies can be enforced via Okta policies
 
 ---
 
