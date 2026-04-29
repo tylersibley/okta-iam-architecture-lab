@@ -2,6 +2,9 @@ const oktaDomain = "https://integrator-1985580.okta.com";
 const clientId = "0oa12fnbbyuAYNWB9698";
 const redirectUri = window.location.origin + "/okta-iam-architecture-lab/app/index.html";
 
+// Local backend API
+const apiBaseUrl = "http://localhost:3000";
+
 function base64UrlEncode(buffer) {
   return btoa(String.fromCharCode(...new Uint8Array(buffer)))
     .replace(/\+/g, "-")
@@ -53,8 +56,32 @@ function decodeJwt(token) {
   return JSON.parse(decodedPayload);
 }
 
+function validateIdToken(payload) {
+  const expectedIssuer = `${oktaDomain}/oauth2/default`;
+
+  if (payload.iss !== expectedIssuer) {
+    alert("Invalid issuer");
+    return false;
+  }
+
+  if (payload.aud !== clientId) {
+    alert("Invalid audience");
+    return false;
+  }
+
+  if (Date.now() / 1000 > payload.exp) {
+    alert("Token expired");
+    return false;
+  }
+
+  return true;
+}
+
 function renderRoleBasedUI(payload) {
   const groups = payload.groups || [];
+
+  document.querySelector(".login-card").style.display = "none";
+  document.getElementById("appContent").classList.remove("hidden");
 
   document.getElementById("dashboard").classList.remove("hidden");
   document.getElementById("engineering").classList.add("hidden");
@@ -67,16 +94,16 @@ function renderRoleBasedUI(payload) {
     document.getElementById("engineering").classList.remove("hidden");
     document.getElementById("admin").classList.remove("hidden");
     document.getElementById("apiAccessText").innerText =
-      "Admin API access granted: user has App-Admin group claim.";
+      "Admin access granted: user has App-Admin group claim.";
   } else if (groups.includes("App-Engineer")) {
     roleText = "Engineer";
     document.getElementById("engineering").classList.remove("hidden");
     document.getElementById("apiAccessText").innerText =
-      "Admin API access denied: engineer role does not have App-Admin claim.";
+      "Admin access denied: engineer role does not have App-Admin claim.";
   } else if (groups.includes("App-Sales")) {
     roleText = "Sales";
     document.getElementById("apiAccessText").innerText =
-      "Admin API access denied: sales role is limited to dashboard access.";
+      "Admin access denied: sales role is limited to dashboard access.";
   } else {
     document.getElementById("apiAccessText").innerText =
       "No matching App-* group found. Defaulting to basic user access.";
@@ -118,21 +145,51 @@ async function handleRedirect() {
 
   const tokens = await tokenResponse.json();
 
-  if (tokens.id_token) {
-    sessionStorage.setItem("id_token", tokens.id_token);
-  }
-
-  if (tokens.id_token || tokens.access_token) {
-    document.querySelector(".login-card").style.display = "none";
-    document.getElementById("appContent").classList.remove("hidden");
-
-    const payload = decodeJwt(tokens.id_token);
-    renderRoleBasedUI(payload);
-
-    window.history.replaceState({}, document.title, redirectUri);
-  } else {
+  if (!tokens.id_token || !tokens.access_token) {
     console.error(tokens);
     alert("Login failed. Check console.");
+    return;
+  }
+
+  const payload = decodeJwt(tokens.id_token);
+
+  if (!validateIdToken(payload)) return;
+
+  sessionStorage.setItem("id_token", tokens.id_token);
+  sessionStorage.setItem("access_token", tokens.access_token);
+
+  renderRoleBasedUI(payload);
+
+  window.history.replaceState({}, document.title, redirectUri);
+}
+
+async function callAdminAPI() {
+  const accessToken = sessionStorage.getItem("access_token");
+
+  if (!accessToken) {
+    alert("Not authenticated");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${apiBaseUrl}/admin`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(`${response.status} Forbidden: ${data.message}`);
+      return;
+    }
+
+    alert(data.message);
+  } catch (error) {
+    alert("Backend not running. Start the Node.js server first.");
+    console.error(error);
   }
 }
 
@@ -151,4 +208,19 @@ function logout() {
   window.location.href = logoutUrl;
 }
 
+function restoreSession() {
+  const idToken = sessionStorage.getItem("id_token");
+
+  if (!idToken) return;
+
+  const payload = decodeJwt(idToken);
+
+  if (validateIdToken(payload)) {
+    renderRoleBasedUI(payload);
+  } else {
+    sessionStorage.clear();
+  }
+}
+
 handleRedirect();
+restoreSession();
