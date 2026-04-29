@@ -1,18 +1,27 @@
-# Enterprise IAM Demo App (Okta OIDC + PKCE)
+# Enterprise IAM Demo App (Okta + AWS Federation)
 
 ## Overview
 
-This project demonstrates a real-world Identity and Access Management (IAM) implementation using Okta. It simulates a secure internal application protected by OAuth 2.0, OpenID Connect (OIDC), and PKCE.
+This project demonstrates a real-world **Identity and Access Management (IAM)** system using Okta as the Identity Provider and AWS for federated access.
 
-Users authenticate through Okta and are redirected back to the application with secure tokens. The app then renders content based on authentication state.
+It simulates a secure internal enterprise application with:
+
+- 🔐 Single Sign-On (SSO) via Okta (OIDC + PKCE)
+- 🧠 Role-Based Access Control (RBAC) using Okta group claims
+- 🔒 Backend-style authorization enforcement
+- ☁️ Federated access to AWS via SAML + IAM roles
+- 📋 Audit logging of authentication and access events
+
+Users authenticate through Okta, receive secure JWTs, and are granted or denied access based on their assigned role.
 
 ---
 
-🚀 Live Demo: https://tylersibley.github.io/okta-iam-architecture-lab/
+🚀 **Live Demo:**  
+https://tylersibley.github.io/okta-iam-architecture-lab/
 
 ---
 
-## Diagram
+## Architecture Diagram
 
 ![Diagram](./screenshots/iam_diagram.png)
 
@@ -20,100 +29,151 @@ Users authenticate through Okta and are redirected back to the application with 
 
 ## Key Features
 
-* 🔐 Okta OAuth 2.0 Authorization Code Flow with PKCE
-* 🌐 OpenID Connect (OIDC) authentication
-* 🔁 Secure redirect + token exchange
-* 🧠 Session-based login handling
-* 🚪 Logout with Okta session termination
-* 🔐 Role-Based Access Control (RBAC) using Okta group claims
+- 🔐 **Okta OIDC Authorization Code Flow with PKCE**
+- 👥 **Role-Based Access Control (RBAC)** using Okta groups
+- 🧾 **JWT Token Inspection** (claims, expiration, issuer)
+- 🧠 **Frontend + Backend RBAC enforcement**
+- 🚫 **Access Denied handling for unauthorized users**
+- ☁️ **AWS Federation via SAML → IAM Role (temporary credentials)**
+- 📋 **Audit Log system (authentication + API + federation events)**
 
 ---
 
-## Architecture Flow
+## Authentication & Authorization Flow
 
 1. User clicks **Login with Okta**
 2. Redirected to Okta `/authorize` endpoint
-3. User authenticates
-4. Okta returns **authorization code**
-5. App exchanges code for tokens via `/token`
-6. UI updates to authenticated state
+3. User authenticates (with optional MFA)
+4. Okta returns an **authorization code**
+5. App exchanges code for **ID + Access tokens**
+6. JWT is parsed for **group claims**
+7. UI renders based on role (RBAC)
+8. APIs enforce access control based on role
+9. (Optional) User accesses AWS via **SAML federation**
 
-This implementation demonstrates how identity providers (IdPs) embed authorization data (group membership) directly into ID tokens, enabling frontend applications to enforce role-based access control without additional backend calls.
+---
+
+## Role-Based Access Control (RBAC)
+
+| Role        | Access Level                          |
+|------------|--------------------------------------|
+| Admin      | Full access (Admin + Engineering APIs) |
+| Engineering| Engineering APIs only                 |
+| Sales      | Sales APIs only                      |
+
+RBAC is enforced in:
+- ✅ Frontend (UI visibility)
+- ✅ Backend simulation (API authorization responses)
 
 ---
 
 ## Tech Stack
 
-* Frontend: HTML, CSS, JavaScript
-* Identity Provider: Okta
-* Protocols: OAuth 2.0, OpenID Connect (OIDC)
-* Security: PKCE (Proof Key for Code Exchange)
+- **Frontend:** HTML, CSS, JavaScript  
+- **Identity Provider:** Okta  
+- **Cloud Integration:** AWS (SAML Federation + IAM Role)  
+- **Protocols:** OAuth 2.0, OpenID Connect (OIDC), SAML  
+- **Security:** PKCE, JWT validation concepts  
 
 ---
 
 ## Screenshots
 
-### 🔧 Okta App Configuration
+---
 
-![App Config](./screenshots/Okta_app_config.PNG)
+### 1. 🔓 Login Screen
+![Login](./screenshots/1_login_screen.PNG)
 
-### 🔐 Authorization Policy Rule
+---
 
-![Policy Rule](./screenshots/Policy_rule.PNG)
+### 2. 🔐 Okta Hosted Login
+![Okta Login](./screenshots/2_okta_login.PNG)
 
-### 🔓 Login Screen
+---
 
-![Login](./screenshots/login_page.PNG)
+### 3. 👑 Admin Dashboard (Full Access)
+![Admin Dashboard](./screenshots/3_admin_dashboard.PNG)
 
-### 🔁 Okta Hosted Login Redirect
-![Okta Hosted Login](screenshots/okta_hosted_login.PNG)
+---
 
-### ✅ Successful Authentication
+### 4. ✅ Admin API Access (Allowed)
+![Admin API Success](./screenshots/4_admin_api_success.PNG)
 
-### 🧑‍💻 Engineer RBAC View
-![Engineer RBAC](screenshots/engineer_view1.PNG)
+---
 
-### 👑 Admin RBAC View
-![Admin RBAC](screenshots/admin_view1.PNG)
+### 5. 💼 Sales User Dashboard (Restricted)
+![Sales Dashboard](./screenshots/5_sales_dashboard.PNG)
 
-### 💼 Sales RBAC View
-![Sales RBAC](screenshots/sales_view1.PNG)
+---
 
-### ⚠️ Debugging Errors (PKCE / Policy)
+### 6. 🚫 Access Denied (RBAC Enforcement)
+![Access Denied](./screenshots/6_sales_access_denied.PNG)
 
-![Error](./screenshots/error_page0.PNG)
-![Error1](./screenshots/error2.PNG)
+---
+
+### 7. ☁️ AWS Federation (Assumed Role)
+![AWS Federation](./screenshots/7_aws_federation.PNG)
+
+---
+
+### 8. 📋 Audit Log (Authentication + API + Federation)
+![Audit Logs](./screenshots/8_audit_logs.PNG)
+
+---
+
+## AWS Federation Flow
+
+- User clicks **Access AWS (Federated SSO)**
+- Okta issues a **SAML assertion**
+- AWS trusts Okta as Identity Provider
+- User assumes an **IAM Role**
+- AWS provides **temporary credentials**
+
+This mirrors how enterprises grant secure cloud access without IAM users.
 
 ---
 
 ## Lessons Learned
 
-* Configuring OAuth flows requires correct **grant types + PKCE alignment**
-* Okta policies must explicitly allow **Authorization Code flow**
-* Redirect URIs must match exactly or authentication fails
-* Debugging IAM flows involves interpreting multiple error states (PKCE, policy, assignment)
+- IAM systems combine **authentication + authorization + identity data**
+- RBAC should be enforced both in UI and backend systems
+- JWTs can carry authorization data (groups/roles)
+- OAuth (OIDC) and SAML solve different enterprise use cases
+- AWS federation removes need for long-term credentials
+- Audit logging is critical for **security visibility and compliance**
 
 ---
 
 ## How to Run
 
-1. Clone repo
-2. Update `script.js` with your Okta domain + client ID
-3. Host with GitHub Pages or local server
-4. Click **Login with Okta**
+1. Clone the repo
+2. Update `script.js` with:
+   - Okta domain
+   - Client ID
+3. Configure your Okta app (OIDC + PKCE)
+4. Host locally or via GitHub Pages
+5. Click **Login with Okta**
 
 ---
 
 ## Production Considerations
 
-- Tokens should be validated server-side (JWT signature verification)
-- Access tokens should be used for API authorization (not ID tokens)
-- Sensitive logic should not rely solely on frontend RBAC
-- Secure storage should use HTTP-only cookies instead of sessionStorage
-- MFA and conditional access policies can be enforced via Okta policies
+- Validate JWT signatures server-side
+- Use Access Tokens for API authorization
+- Store tokens securely (HTTP-only cookies preferred)
+- Enforce RBAC at backend (not just UI)
+- Implement MFA + conditional access policies in Okta
+- Use least-privilege IAM roles in AWS
 
 ---
 
 ## Why This Matters
 
-This project replicates how real SaaS apps (like Okta, AWS, Google) handle authentication securely in production environments.
+This project replicates how real enterprise systems:
+
+- Authenticate users (SSO)
+- Control access (RBAC)
+- Integrate with cloud providers (AWS federation)
+- Monitor activity (audit logs)
+
+It reflects patterns used by platforms like Okta, AWS, and enterprise SaaS applications.
