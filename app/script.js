@@ -136,8 +136,14 @@ async function handleRedirect() {
 async function callApi(endpoint) {
   const token = sessionStorage.getItem("access_token");
   const box = document.getElementById("apiResponseBox");
+  const pill = document.getElementById("apiStatusPill");
 
+  // LOADING STATE
   box.innerText = "Loading...";
+  box.style.background = "#1e293b";
+
+  pill.innerText = "Loading...";
+  pill.className = "status-pill loading";
 
   try {
     const res = await fetch(`${apiBaseUrl}${endpoint}`, {
@@ -146,17 +152,30 @@ async function callApi(endpoint) {
 
     const data = await res.json();
 
+    // ❌ ERROR RESPONSE
     if (!res.ok) {
-      box.innerText = `❌ ${res.status}\n${JSON.stringify(data, null, 2)}`;
+      box.innerText = `❌ ${res.status}\n\n${JSON.stringify(data, null, 2)}`;
       box.style.background = "#7f1d1d";
+
+      pill.innerText = "Denied";
+      pill.className = "status-pill error";
+
       return;
     }
 
-    box.innerText = `✅ SUCCESS\n${JSON.stringify(data, null, 2)}`;
+    // ✅ SUCCESS RESPONSE
+    box.innerText = `✅ SUCCESS\n\n${JSON.stringify(data, null, 2)}`;
     box.style.background = "#064e3b";
 
-  } catch {
-    box.innerText = "❌ Backend not running";
+    pill.innerText = "Success";
+    pill.className = "status-pill success";
+
+  } catch (err) {
+    box.innerText = "❌ Backend not reachable";
+    box.style.background = "#7f1d1d";
+
+    pill.innerText = "Error";
+    pill.className = "status-pill error";
   }
 }
 
