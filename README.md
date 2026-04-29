@@ -58,7 +58,14 @@ Users authenticate through Okta and are redirected back to the application with 
 
 ### ✅ Successful Authentication
 
-![Logged In](./screenshots/logged_in_with_okta.PNG)
+### 🧑‍💻 Engineer RBAC View
+![Engineer RBAC](screenshots/engineer_view1.PNG)
+
+### 👑 Admin RBAC View
+![Admin RBAC](screenshots/admin_view1.PNG)
+
+### 💼 Sales RBAC View
+![Sales RBAC](screenshots/sales_view1.PNG)
 
 ### ⚠️ Debugging Errors (PKCE / Policy)
 
