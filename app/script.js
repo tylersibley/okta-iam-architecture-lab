@@ -1,6 +1,7 @@
 const oktaDomain = "https://integrator-1985580.okta.com";
 const clientId = "0oa12fnbbyuAYNWB9698";
-const redirectUri = window.location.origin + "/okta-iam-architecture-lab/app/index.html";
+const redirectUri =
+  window.location.origin + "/okta-iam-architecture-lab/app/index.html";
 
 // Local backend API
 const apiBaseUrl = "http://localhost:3000";
@@ -18,7 +19,8 @@ async function sha256(plain) {
 }
 
 function generateRandomString(length = 64) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
   let result = "";
   const randomValues = new Uint8Array(length);
   crypto.getRandomValues(randomValues);
@@ -116,7 +118,9 @@ function renderRoleBasedUI(payload) {
     `User: ${payload.name || "Unknown"} (${payload.email || "No email claim"})`;
 
   document.getElementById("groupInfo").innerText =
-    `Okta Groups: ${groups.length ? groups.join(", ") : "No App-* group claim found"}`;
+    `Okta Groups: ${
+      groups.length ? groups.join(", ") : "No App-* group claim found"
+    }`;
 
   console.log("ID Token Payload:", payload);
   console.log("User groups:", groups);
@@ -164,6 +168,10 @@ async function handleRedirect() {
 }
 
 async function callAdminAPI() {
+  callApi("/admin");
+}
+
+async function callApi(endpoint) {
   const accessToken = sessionStorage.getItem("access_token");
 
   if (!accessToken) {
@@ -171,8 +179,14 @@ async function callAdminAPI() {
     return;
   }
 
+  const output = document.getElementById("apiResponseBox");
+
+  if (output) {
+    output.innerText = `Calling ${endpoint}...`;
+  }
+
   try {
-    const response = await fetch(`${apiBaseUrl}/admin`, {
+    const response = await fetch(`${apiBaseUrl}${endpoint}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -181,16 +195,46 @@ async function callAdminAPI() {
 
     const data = await response.json();
 
-    if (!response.ok) {
-      alert(`${response.status} Forbidden: ${data.message}`);
+    if (!output) {
+      alert(data.message || "API call complete");
       return;
     }
 
-    alert(data.message);
+    if (!response.ok) {
+      output.innerText = `❌ ${response.status} ERROR\n\n${JSON.stringify(
+        data,
+        null,
+        2
+      )}`;
+      return;
+    }
+
+    output.innerText = `✅ SUCCESS\n\n${JSON.stringify(data, null, 2)}`;
   } catch (error) {
+    if (output) {
+      output.innerText =
+        "❌ Backend not running. Start the Node.js server first.";
+    }
+
     alert("Backend not running. Start the Node.js server first.");
     console.error(error);
   }
+}
+
+function callVerify() {
+  callApi("/verify");
+}
+
+function callSales() {
+  callApi("/sales-data");
+}
+
+function callEngineering() {
+  callApi("/engineering-data");
+}
+
+function callAdminData() {
+  callApi("/admin-data");
 }
 
 function logout() {
