@@ -291,22 +291,66 @@ function simulateAWS(service) {
     allowed = groups.includes("App-Admin");
   }
 
-  // 👇 THIS PART IS WHAT YOU WERE MISSING
+function simulateAWS(service) {
+  const token = sessionStorage.getItem("access_token");
+  const box = document.getElementById("apiResponseBox");
+  const pill = document.getElementById("apiStatusPill");
+
+  hideAccessDenied();
+  addLog(`AWS access attempt: ${service}`);
+
+  if (!token) {
+    box.innerText = "❌ Not authenticated";
+    box.style.background = "#7f1d1d";
+    pill.innerText = "Error";
+    pill.className = "status-pill error";
+    return;
+  }
+
+  const payload = decodeJwt(token);
+  const groups = payload.groups || [];
+
+  let allowed = false;
+
+  if (service === "S3") {
+    allowed = groups.includes("App-Sales") || groups.includes("App-Admin");
+  }
+
+  if (service === "RDS") {
+    allowed = groups.includes("App-Engineer") || groups.includes("App-Admin");
+  }
+
+  if (service === "Console") {
+    allowed = groups.includes("App-Admin");
+  }
+
+  const result = {
+    service,
+    type: "AWS Federated Access Simulation",
+    currentRole,
+    userGroups: groups,
+    decision: allowed ? "Access granted" : "Access denied",
+  };
+
   if (allowed) {
-    updateAPIStatus("success");
-    showAPIResponse({
-      message: `AWS ${service} access granted`,
-      type: "Federated Access Simulation",
-      userGroups: groups
-    });
+    box.innerText = `✅ AWS ${service} ACCESS GRANTED\n\n${JSON.stringify(result, null, 2)}`;
+    box.style.background = "#064e3b";
+
+    pill.innerText = "Success";
+    pill.className = "status-pill success";
+
     addLog(`AWS ${service} access granted`);
   } else {
-    updateAPIStatus("error");
-    showAPIResponse({
-      message: `AWS ${service} access denied`,
-      requiredAccess: service,
-      userGroups: groups
+    box.innerText = `❌ AWS ${service} ACCESS DENIED\n\n${JSON.stringify(result, null, 2)}`;
+    box.style.background = "#7f1d1d";
+
+    pill.innerText = "Denied";
+    pill.className = "status-pill error";
+
+    showAccessDenied(`AWS ${service}`, {
+      message: `Required AWS permission not mapped to ${currentRole} role.`,
     });
+
     addLog(`AWS ${service} access denied`);
   }
 }
