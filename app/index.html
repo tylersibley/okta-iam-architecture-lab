@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enterprise IAM Demo App</title>
-  <link rel="stylesheet" href="style.css?v=3" />
+  <link rel="stylesheet" href="style.css?v=6" />
 </head>
 <body>
   <div class="container">
@@ -15,14 +15,7 @@
 
     <section class="login-card">
       <h2>Login Simulation</h2>
-      <p>Select a user role to simulate Okta group-based access.</p>
-
-      <select id="roleSelect">
-        <option value="sales">Sales</option>
-        <option value="engineer">Engineer</option>
-        <option value="admin">Admin</option>
-      </select>
-
+      <p>Authentication and role access are controlled by Okta groups.</p>
       <button onclick="login()">Login with Okta</button>
     </section>
 
@@ -48,11 +41,12 @@
         <div class="card hidden" id="admin">
           <h3>Admin Panel</h3>
           <p>User management, access policies, and security settings.</p>
+          <button onclick="callAdminAPI()">Run Admin API Action</button>
         </div>
       </div>
 
       <div class="api-card">
-        <h3>Simulated Authorization Check</h3>
+        <h3>Authorization Check</h3>
         <p id="apiAccessText"></p>
       </div>
 
@@ -60,6 +54,6 @@
     </section>
   </div>
 
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=6"></script>
 </body>
 </html>
