@@ -36,31 +36,6 @@ This implementation demonstrates how identity providers (IdPs) embed authorizati
 
 ---
 
-## Architecture Diagram
-
-```mermaid
-flowchart LR
-    A[👤 User Browser] -->|1. Click Login| B[💻 Frontend App<br/>(Your App)]
-    B -->|2. /authorize (PKCE)| C[🔐 Okta Authorization Server]
-    
-    C -->|3. Login + MFA| A
-    C -->|4. Authorization Code| B
-    
-    B -->|5. POST /token<br/>(code + verifier)| D[🔑 Okta Token Endpoint]
-    
-    D -->|6. ID Token + Access Token<br/>(includes groups)| B
-    
-    B -->|7. RBAC Logic| E{Role-Based UI}
-    
-    E -->|Admin| F[👑 Admin Panel]
-    E -->|Engineer| G[🛠 Engineering Tools]
-    E -->|Sales| H[📊 Sales Dashboard]
-    
-    B -->|Optional| I[☁️ AWS Resources]
-    I --> J[(S3 / RDS / Console)]
-
----
-
 ## Tech Stack
 
 * Frontend: HTML, CSS, JavaScript
