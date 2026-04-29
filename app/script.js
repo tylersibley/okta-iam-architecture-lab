@@ -97,7 +97,7 @@ function renderRoleBasedUI(payload) {
     `Groups: ${groups.join(", ")}`;
 
   document.getElementById("apiAccessText").innerText =
-    `Frontend RBAC applied based on token groups`;
+  `Frontend RBAC applied (UI) — Backend enforces real security via JWT + group claims`;
 }
 
 // ===== REDIRECT =====
