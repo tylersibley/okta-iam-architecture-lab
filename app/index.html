@@ -106,6 +106,31 @@
         <pre id="apiResponseBox">Click a button to test APIs...</pre>
       </div>
 
+      <div class="api-card">
+  <h3>☁️ AWS Federated Access (Simulated)</h3>
+  <p>This demonstrates how Okta identities can be used to access AWS resources.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h4>🪣 S3 Access</h4>
+      <p>Read-only access to storage buckets</p>
+      <button onclick="simulateAWS('S3')">Test S3 Access</button>
+    </div>
+
+    <div class="card">
+      <h4>🗄️ RDS Access</h4>
+      <p>Database query permissions</p>
+      <button onclick="simulateAWS('RDS')">Test RDS Access</button>
+    </div>
+
+    <div class="card">
+      <h4>🖥️ AWS Console</h4>
+      <p>Federated login via IAM role</p>
+      <button onclick="simulateAWS('Console')">Simulate Console Login</button>
+    </div>
+  </div>
+</div>
+
       <!-- LOG PANEL -->
       <div class="api-card">
         <h3>📋 Activity Log</h3>
