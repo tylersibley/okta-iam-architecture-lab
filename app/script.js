@@ -265,6 +265,43 @@ function callAdminAPI() {
   callApi("/admin");
 }
 
+// 👇 ADD IT HERE (very bottom)
+function simulateAWS(service) {
+  addLog(`AWS access attempt: ${service}`);
+
+  if (!accessToken) {
+    updateAPIStatus("error");
+    showAPIResponse("❌ Not authenticated");
+    return;
+  }
+
+  const groups = parseJwt(accessToken).groups || [];
+
+  let allowed = false;
+
+  if (service === "S3") {
+    allowed = groups.includes("App-Sales") || groups.includes("App-Admin");
+  }
+
+  if (service === "RDS") {
+    allowed = groups.includes("App-Engineer") || groups.includes("App-Admin");
+  }
+
+  if (service === "Console") {
+    allowed = groups.includes("App-Admin");
+  }
+
+  if (allowed) {
+    updateAPIStatus("success");
+    showAPIResponse(`✅ AWS ${service} access granted via federated identity`);
+    addLog(`AWS ${service} access granted`);
+  } else {
+    updateAPIStatus("error");
+    showAPIResponse(`❌ AWS ${service} access denied (RBAC)`);
+    addLog(`AWS ${service} access denied`);
+  }
+}
+
 // ===== LOGOUT =====
 function logout() {
   const idToken = sessionStorage.getItem("id_token");
