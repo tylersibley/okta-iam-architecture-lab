@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const jwksClient = require("jwks-rsa");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 const oktaDomain = "https://integrator-1985580.okta.com";
 const issuer = `${oktaDomain}/oauth2/default`;
