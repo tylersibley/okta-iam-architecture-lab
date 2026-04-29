@@ -103,6 +103,26 @@ header p,
   color: #475569;
 }
 
+/* Token Inspector */
+.token-grid {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.token-grid div {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  word-break: break-word;
+}
+
+.token-grid strong {
+  color: #111827;
+}
+
+/* App Cards */
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -127,6 +147,7 @@ header p,
   font-size: 24px;
 }
 
+/* Buttons */
 button {
   padding: 11px 16px;
   margin-top: 12px;
@@ -152,6 +173,22 @@ button:hover {
   background: #b91c1c;
 }
 
+/* Access Denied */
+#accessDeniedCard {
+  border-color: #fecaca;
+  background: #fff1f2;
+}
+
+#accessDeniedCard h3 {
+  color: #991b1b;
+}
+
+#deniedText {
+  color: #7f1d1d;
+  white-space: pre-wrap;
+}
+
+/* API Testing */
 .api-header {
   display: flex;
   justify-content: space-between;
@@ -203,6 +240,23 @@ button:hover {
   overflow-x: auto;
   min-height: 120px;
   white-space: pre-wrap;
+}
+
+/* Activity Log */
+#logList {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+
+#logList li {
+  background: white;
+  border-left: 4px solid #2563eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #334155;
 }
 
 .hidden {
