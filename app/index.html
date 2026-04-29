@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Enterprise IAM Demo App</title>
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=12" />
 </head>
 <body>
   <div class="container">
@@ -14,17 +14,13 @@
       <p>Simulated internal application protected by Okta SSO, MFA, JWT validation, and RBAC.</p>
     </header>
 
-    <!-- LOGIN -->
     <section class="login-card">
       <h2>Secure Login</h2>
       <p>Authenticate via Okta to access protected APIs.</p>
       <button onclick="login()">Login with Okta</button>
     </section>
 
-    <!-- APP -->
     <section id="appContent" class="hidden">
-
-      <!-- HEADER -->
       <div class="top-panel">
         <div>
           <h2 id="welcomeText"></h2>
@@ -33,14 +29,12 @@
         <div id="roleBadge" class="role-badge">User</div>
       </div>
 
-      <!-- IDENTITY -->
       <div class="identity-card">
         <h3>Identity Claims</h3>
         <p id="userInfo"></p>
         <p id="groupInfo"></p>
       </div>
 
-      <!-- TOKEN INSPECTOR -->
       <div class="api-card">
         <h3>🔍 Token Inspector</h3>
         <div class="token-grid">
@@ -52,7 +46,6 @@
         </div>
       </div>
 
-      <!-- CARDS -->
       <div class="cards">
         <div class="card">
           <span class="card-icon">📊</span>
@@ -74,19 +67,16 @@
         </div>
       </div>
 
-      <!-- ACCESS STATUS -->
       <div class="api-card">
         <h3>Authorization Status</h3>
         <p id="apiAccessText"></p>
       </div>
 
-      <!-- ACCESS DENIED CARD -->
       <div id="accessDeniedCard" class="api-card hidden">
         <h3>🚫 Access Denied</h3>
         <p id="deniedText"></p>
       </div>
 
-      <!-- API TESTING -->
       <div class="api-card">
         <div class="api-header">
           <div>
@@ -107,41 +97,39 @@
       </div>
 
       <div class="api-card">
-  <h3>☁️ AWS Federated Access (Simulated)</h3>
-  <p>This demonstrates how Okta identities can be used to access AWS resources.</p>
+        <h3>☁️ AWS Federated Access</h3>
+        <p>This demonstrates how Okta identities can be used to access AWS resources.</p>
 
-  <div class="cards">
-    <div class="card">
-      <h4>🪣 S3 Access</h4>
-      <p>Read-only access to storage buckets</p>
-      <button onclick="simulateAWS('S3')">Test S3 Access</button>
-    </div>
+        <div class="cards">
+          <div class="card">
+            <h4>🪣 S3 Access</h4>
+            <p>Simulated read-only access to storage buckets.</p>
+            <button onclick="simulateAWS('S3')">Test S3 Access</button>
+          </div>
 
-    <div class="card">
-      <h4>🗄️ RDS Access</h4>
-      <p>Database query permissions</p>
-      <button onclick="simulateAWS('RDS')">Test RDS Access</button>
-    </div>
+          <div class="card">
+            <h4>🗄️ RDS Access</h4>
+            <p>Simulated database query permissions.</p>
+            <button onclick="simulateAWS('RDS')">Test RDS Access</button>
+          </div>
 
-    <div class="card">
-      <h4>🖥️ AWS Console</h4>
-      <p>Federated login via IAM role</p>
-      <button onclick="openAWSConsole()">Open AWS Console</button>
-    </div>
-  </div>
-</div>
+          <div class="card">
+            <h4>🖥️ AWS Console</h4>
+            <p>Real federated login via Okta SAML and AWS IAM role.</p>
+            <button onclick="openAWSConsole()">Open AWS Console</button>
+          </div>
+        </div>
+      </div>
 
-      <!-- LOG PANEL -->
       <div class="api-card">
         <h3>📋 Activity Log</h3>
         <ul id="logList"></ul>
       </div>
 
       <button class="logout" onclick="logout()">Logout</button>
-
     </section>
   </div>
 
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=12"></script>
 </body>
 </html>
