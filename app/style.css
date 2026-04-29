@@ -85,3 +85,17 @@ button:hover {
 .hidden {
   display: none;
 }
+
+.identity-card,
+.api-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #f9fafb;
+  margin-top: 18px;
+}
+
+.identity-card p,
+.api-card p {
+  margin: 6px 0;
+}
