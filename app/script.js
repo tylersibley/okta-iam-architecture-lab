@@ -97,8 +97,13 @@ function renderRoleBasedUI(payload) {
   const groups = payload.groups || [];
 
 // 👇 ADD THIS RIGHT HERE
-if (!groups.includes("Engineering") && !groups.includes("Admin")) {
-  document.getElementById("awsCard").style.display = "none";
+const awsCard = document.getElementById("awsCard");
+
+if (awsCard) {
+  awsCard.style.display =
+    groups.includes("App-Engineer") || groups.includes("App-Admin")
+      ? "block"
+      : "none";
 }
 
   if (!groups.includes("Engineering") && !groups.includes("Admin")) {
