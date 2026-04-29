@@ -5,8 +5,6 @@ const redirectUri =
 
 const apiBaseUrl = "https://okta-iam-backend.onrender.com";
 
-const awsFederationUrl = "https://integrator-1985580.okta.com/home/integrator-1985580_awsfederatedaccess_1/0oa12gny65j6BUbaJ698/aln12go9ft1MtuZBV698";
-
 let currentRole = "User";
 
 // ===== PKCE =====
@@ -34,6 +32,7 @@ function generateRandomString(length = 64) {
 
 async function login() {
   addLog("Login started — redirecting to Okta");
+
   const codeVerifier = generateRandomString();
   sessionStorage.setItem("pkce_code_verifier", codeVerifier);
 
@@ -61,9 +60,22 @@ function decodeJwt(token) {
 
 function validateIdToken(payload) {
   const expectedIssuer = `${oktaDomain}/oauth2/default`;
-  if (payload.iss !== expectedIssuer) return false;
-  if (payload.aud !== clientId) return false;
-  if (Date.now() / 1000 > payload.exp) return false;
+
+  if (payload.iss !== expectedIssuer) {
+    alert("Invalid issuer.");
+    return false;
+  }
+
+  if (payload.aud !== clientId) {
+    alert("Invalid audience.");
+    return false;
+  }
+
+  if (Date.now() / 1000 > payload.exp) {
+    alert("Token expired.");
+    return false;
+  }
+
   return true;
 }
 
@@ -72,7 +84,7 @@ function formatUnixTime(unixTime) {
   return new Date(unixTime * 1000).toLocaleString();
 }
 
-// ===== LOGGING =====
+// ===== AUDIT LOGGING =====
 function addLog(message) {
   const logList = document.getElementById("logList");
   if (!logList) return;
@@ -81,9 +93,11 @@ function addLog(message) {
   li.className = "audit-log-item";
 
   let type = "INFO";
-  if (message.toLowerCase().includes("denied")) type = "DENIED";
-  if (message.toLowerCase().includes("granted") || message.toLowerCase().includes("successful")) type = "SUCCESS";
-  if (message.toLowerCase().includes("aws") || message.toLowerCase().includes("federation")) type = "FEDERATION";
+  const lower = message.toLowerCase();
+
+  if (lower.includes("denied")) type = "DENIED";
+  if (lower.includes("granted") || lower.includes("successful")) type = "SUCCESS";
+  if (lower.includes("aws") || lower.includes("federation")) type = "FEDERATION";
 
   li.innerHTML = `
     <span class="audit-time">${new Date().toLocaleTimeString()}</span>
@@ -108,16 +122,6 @@ function renderTokenInspector(payload) {
 function renderRoleBasedUI(payload) {
   const groups = payload.groups || [];
 
-// 👇 ADD THIS RIGHT HERE
-const awsCard = document.getElementById("awsCard");
-
-if (awsCard) {
-  awsCard.style.display =
-    groups.includes("App-Engineer") || groups.includes("App-Admin")
-      ? "block"
-      : "none";
-}
-
   document.querySelector(".login-card").style.display = "none";
   document.getElementById("appContent").classList.remove("hidden");
 
@@ -137,6 +141,14 @@ if (awsCard) {
     currentRole = "Sales";
   }
 
+  const awsCard = document.getElementById("awsCard");
+  if (awsCard) {
+    awsCard.style.display =
+      groups.includes("App-Engineer") || groups.includes("App-Admin")
+        ? "block"
+        : "none";
+  }
+
   const badge = document.getElementById("roleBadge");
   badge.innerText = currentRole;
   badge.className = `role-badge ${currentRole.toLowerCase()}`;
@@ -151,13 +163,13 @@ if (awsCard) {
     `Groups: ${groups.length ? groups.join(", ") : "No groups found"}`;
 
   document.getElementById("apiAccessText").innerText =
-    "Frontend RBAC applied (UI) — Backend enforces real security via JWT + group claims.";
+    "Frontend RBAC applied based on Okta group claims. Backend APIs independently validate JWTs and enforce group-based access.";
 
   renderTokenInspector(payload);
   addLog(`Login successful as ${currentRole}`);
 }
 
-// ===== REDIRECT =====
+// ===== REDIRECT HANDLER =====
 async function handleRedirect() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get("code");
@@ -186,10 +198,7 @@ async function handleRedirect() {
 
   const payload = decodeJwt(tokens.id_token);
 
-  if (!validateIdToken(payload)) {
-    alert("Invalid ID token.");
-    return;
-  }
+  if (!validateIdToken(payload)) return;
 
   sessionStorage.setItem("access_token", tokens.access_token);
   sessionStorage.setItem("id_token", tokens.id_token);
@@ -216,7 +225,7 @@ function hideAccessDenied() {
   document.getElementById("accessDeniedCard").classList.add("hidden");
 }
 
-// ===== API CORE =====
+// ===== BACKEND API CORE =====
 async function callApi(endpoint) {
   const token = sessionStorage.getItem("access_token");
   const box = document.getElementById("apiResponseBox");
@@ -265,6 +274,7 @@ async function callApi(endpoint) {
     pill.className = "status-pill error";
 
     addLog("Backend not reachable");
+    console.error(err);
   }
 }
 
@@ -289,11 +299,7 @@ function callAdminAPI() {
   callApi("/admin");
 }
 
-function openAWSConsole() {
-  addLog("Redirecting to AWS Console via Okta SAML federation");
-  window.open(awsFederationUrl, "_blank");
-}
-
+// ===== AWS ACCESS SIMULATION =====
 function simulateAWS(service) {
   const box = document.getElementById("apiResponseBox");
   const pill = document.getElementById("apiStatusPill");
@@ -312,7 +318,7 @@ function simulateAWS(service) {
     decision:
       service === "S3"
         ? "Allowed for Sales/Admin-style access"
-        : "Allowed for Engineer/Admin-style access"
+        : "Allowed for Engineer/Admin-style access",
   };
 
   box.innerText = `☁️ AWS ${service} ACCESS SIMULATION\n\n${JSON.stringify(result, null, 2)}`;
