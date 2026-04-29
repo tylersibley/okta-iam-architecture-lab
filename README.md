@@ -12,6 +12,12 @@ Users authenticate through Okta and are redirected back to the application with 
 
 ---
 
+## Diagram
+
+![Diagram](./screenshots/iam_diagram.png)
+
+---
+
 ## Key Features
 
 * 🔐 Okta OAuth 2.0 Authorization Code Flow with PKCE
@@ -33,8 +39,6 @@ Users authenticate through Okta and are redirected back to the application with 
 6. UI updates to authenticated state
 
 This implementation demonstrates how identity providers (IdPs) embed authorization data (group membership) directly into ID tokens, enabling frontend applications to enforce role-based access control without additional backend calls.
-
-![Diagram](./screenshots/iam_diagram.png)
 
 ---
 
