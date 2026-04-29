@@ -68,9 +68,11 @@ async function handleRedirect() {
       `&code_verifier=${codeVerifier}`,
   });
 
+  const tokens = await tokenResponse.json();
+
   if (tokens.id_token) {
-  sessionStorage.setItem("id_token", tokens.id_token);
-}
+    sessionStorage.setItem("id_token", tokens.id_token);
+  }
 
   if (tokens.id_token || tokens.access_token) {
     document.querySelector(".login-card").style.display = "none";
