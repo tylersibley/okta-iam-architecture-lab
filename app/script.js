@@ -96,6 +96,10 @@ function renderTokenInspector(payload) {
 function renderRoleBasedUI(payload) {
   const groups = payload.groups || [];
 
+  if (!groups.includes("Engineering") && !groups.includes("Admin")) {
+  document.querySelector(".aws-button").style.display = "none";
+}
+
   document.querySelector(".login-card").style.display = "none";
   document.getElementById("appContent").classList.remove("hidden");
 
