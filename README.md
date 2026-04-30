@@ -23,7 +23,7 @@ https://tylersibley.github.io/okta-iam-architecture-lab/
 
 ## Architecture Diagram
 
-![Diagram](./screenshots/iam_diagram.png)
+![Diagram](./screenshots/okta_diagram_sso.png)
 
 ---
 
