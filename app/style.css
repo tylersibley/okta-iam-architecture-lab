@@ -376,3 +376,94 @@ button:hover,
   background: #fef3c7;
   color: #92400e;
 }
+
+/* ── How It Works Panel ── */
+.how-it-works {
+  background: white;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+  margin-bottom: 24px;
+}
+
+.how-it-works h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #1f2937;
+}
+
+.how-subtitle {
+  color: #64748b;
+  margin: 0 0 20px;
+  font-size: 14px;
+}
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.how-card {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.how-icon {
+  font-size: 22px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.how-card h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #111827;
+}
+
+.how-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.roles-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.roles-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.role-chip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.role-chip.admin {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.role-chip.engineer {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.role-chip.sales {
+  background: #dcfce7;
+  color: #166534;
+}
