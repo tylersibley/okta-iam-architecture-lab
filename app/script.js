@@ -191,7 +191,6 @@ function renderRoleBasedUI(payload) {
 
   // Hide the login card, show the authenticated app content
   document.querySelector(".login-card").style.display = "none";
-  document.querySelector(".login-card").style.display = "none";
 const howItWorks = document.getElementById("howItWorks");
 if (howItWorks) howItWorks.style.display = "none";
   document.getElementById("appContent").classList.remove("hidden");
