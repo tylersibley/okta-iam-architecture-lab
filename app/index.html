@@ -21,6 +21,41 @@
       <button onclick="login()">Login with Okta</button>
     </section>
 
+    <section id="howItWorks" class="how-it-works">
+      <h2>How This Demo Works</h2>
+      <p class="how-subtitle">A live enterprise IAM system using real Okta authentication, JWT-based access control, and AWS federation. Log in to explore it.</p>
+
+      <div class="how-grid">
+        <div class="how-card">
+          <span class="how-icon">🔐</span>
+          <h4>Okta SSO + PKCE</h4>
+          <p>Real authentication via Okta's OIDC Authorization Code Flow. PKCE prevents code interception — no client secret needed.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-icon">🧾</span>
+          <h4>JWT Inspection</h4>
+          <p>After login, inspect your actual token claims — sub, iss, aud, exp, and Okta group memberships.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-icon">👥</span>
+          <h4>Role-Based Access Control</h4>
+          <p>The UI and backend APIs respond differently based on your Okta group. Enforced on both the frontend and backend independently.</p>
+        </div>
+        <div class="how-card">
+          <span class="how-icon">☁️</span>
+          <h4>AWS Federation</h4>
+          <p>Admin and Engineer roles can federate into AWS via real Okta SAML, assuming an IAM role with temporary credentials.</p>
+        </div>
+      </div>
+
+      <div class="roles-row">
+        <span class="roles-label">Roles in this demo:</span>
+        <span class="role-chip admin">👑 Admin — Full access</span>
+        <span class="role-chip engineer">🧑‍💻 Engineer — Engineering + AWS</span>
+        <span class="role-chip sales">💼 Sales — Dashboard only</span>
+      </div>
+    </section>
+
     <section id="appContent" class="hidden">
       <div class="top-panel">
         <div>
