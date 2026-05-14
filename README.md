@@ -119,6 +119,9 @@ RBAC is enforced in:
 ### 8. 📋 Audit Log (Authentication + API + Federation)
 ![Audit Logs](./screenshots/8_audit_logs.PNG)
 
+### 9. ⚙️ Okta App Configuration (PKCE Enforced)
+![Okta Config](./screenshots/okta_app_config.PNG)
+
 ---
 
 ## AWS Federation Flow
