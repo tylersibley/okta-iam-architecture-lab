@@ -141,12 +141,12 @@ This mirrors how enterprises grant secure cloud access without IAM users.
 
 ## Lessons Learned
 
-Building this taught me that RBAC needs to be enforced in two places — 
+Building this taught me that RBAC needs to be enforced in two places; 
 the frontend for UX and the backend for actual security. I also learned 
 that OAuth/OIDC and SAML aren't competing standards; they solve different 
 problems, and real enterprise environments use both. The AWS federation 
-piece was the most interesting — seeing a SAML assertion turn into 
-temporary IAM credentials made the whole concept click.
+piece was the most interesting to me; seeing a SAML assertion turn into 
+temporary IAM credentials made the whole concept really click.
 
 ---
 
