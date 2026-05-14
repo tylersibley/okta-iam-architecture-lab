@@ -55,25 +55,26 @@ https://tylersibley.github.io/okta-iam-architecture-lab/
 
 ## Role-Based Access Control (RBAC)
 
-| Role        | Access Level                          |
-|------------|--------------------------------------|
-| Admin      | Full access (Admin + Engineering APIs) |
-| Engineering| Engineering APIs only                 |
-| Sales      | Sales APIs only                      |
+| Role     | Access Level                           |
+|----------|----------------------------------------|
+| Admin    | Full access (Admin + Engineering APIs) |
+| Engineer | Engineering APIs only                  |
+| Sales    | Sales APIs only                        |
 
 RBAC is enforced in:
 - ✅ Frontend (UI visibility)
-- ✅ Backend simulation (API authorization responses)
+- ✅ Backend (API authorization responses)
 
 ---
 
 ## Tech Stack
 
-- **Frontend:** HTML, CSS, JavaScript  
-- **Identity Provider:** Okta  
-- **Cloud Integration:** AWS (SAML Federation + IAM Role)  
-- **Protocols:** OAuth 2.0, OpenID Connect (OIDC), SAML  
-- **Security:** PKCE, JWT validation concepts  
+- **Frontend:** HTML, CSS, JavaScript
+- **Backend:** Node.js (Express), hosted on Render
+- **Identity Provider:** Okta
+- **Cloud Integration:** AWS (SAML Federation + IAM Role)
+- **Protocols:** OAuth 2.0, OpenID Connect (OIDC), SAML
+- **Security:** PKCE, JWT validation concepts
 
 ---
 
@@ -119,6 +120,8 @@ RBAC is enforced in:
 ### 8. 📋 Audit Log (Authentication + API + Federation)
 ![Audit Logs](./screenshots/8_audit_logs.PNG)
 
+---
+
 ### 9. ⚙️ Okta App Configuration (PKCE Enforced)
 ![Okta Config](./screenshots/okta_app_config.PNG)
 
@@ -150,12 +153,12 @@ This mirrors how enterprises grant secure cloud access without IAM users.
 ## How to Run
 
 1. Clone the repo
-2. Update `script.js` with:
-   - Okta domain
-   - Client ID
+2. Update `script.js` with your Okta domain and Client ID
 3. Configure your Okta app (OIDC + PKCE)
 4. Host locally or via GitHub Pages
 5. Click **Login with Okta**
+
+> The backend API is pre-deployed at https://okta-iam-backend.onrender.com — no server setup needed to run the demo.
 
 ---
 
