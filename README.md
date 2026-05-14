@@ -82,7 +82,7 @@ RBAC is enforced in:
 ---
 
 ### 1. 🔓 Login Screen
-![Login](./screenshots/1_login_screen.PNG)
+![Login](./screenshots/new_okta_sign_in.PNG)
 
 ---
 
